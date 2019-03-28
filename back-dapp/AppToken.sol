@@ -1,27 +1,30 @@
 /// @author robinjoo1015 & njw1204
 
 pragma solidity ^0.5.0;
+import "./lib/Ownable.sol";
 import "./lib/SafeMath.sol";
 import "./TokenInterface.sol";
 
-contract AppToken is ExtraTokenInterface {
+contract AppToken is ExtraTokenInterface, Ownable {
     using SafeMath for uint256;
-    
+
+    address public marketAddress = address(0);
+
     event ChangeSeller(uint256 indexed tokenId, address from, address to);
     event ChangeValidTime(uint256 indexed tokenId, uint256 newValidTime);
 
     function balanceOf(address _owner) public view returns (uint256 _balance) {
         return ownerAppCount[_owner];
     }
-    
+
     function ownerOf(uint256 _tokenId) public view returns (address _owner) {
         return ownerOfApp[_tokenId];
     }
-    
+
     function sellerOf(uint256 _tokenId) public view returns (address _seller) {
         return app[_tokenId].seller;
     }
-    
+
     function createApp(string memory _name, string memory _comment, string memory _url, uint256 _validTime) public {
         uint256 _tokenId = totalSupply.add(1);
 
@@ -32,7 +35,7 @@ contract AppToken is ExtraTokenInterface {
         appsOfSeller[msg.sender].push(_tokenId);
         _transfer(address(0), msg.sender, _tokenId); // transfer created app from 0 to msg.sender
     }
-    
+
     function _transfer(address _from, address _to, uint256 _tokenId) private {
         require(_from != _to && _to != address(0));
 
@@ -54,12 +57,17 @@ contract AppToken is ExtraTokenInterface {
         appsOfOwner[_to].push(_tokenId);
         emit Transfer(_from, _to, _tokenId);
     }
-    
+
     function transfer(address _to, uint256 _tokenId) public {
         require(msg.sender == ownerOf(_tokenId));
         _transfer(msg.sender, _to, _tokenId);
     }
-    
+
+    function transferToMarket(address _from, uint256 _tokenId) public {
+        require(_from == ownerOf(_tokenId) && msg.sender == marketAddress);
+        _transfer(_from, marketAddress, _tokenId);
+    }
+
     function changeSeller(address _to, uint256 _tokenId) public {
         require(msg.sender == sellerOf(_tokenId) && _to != address(0));
 
@@ -75,7 +83,7 @@ contract AppToken is ExtraTokenInterface {
         appsOfSeller[_to].push(_tokenId);
         emit ChangeSeller(_tokenId, msg.sender, _to);
     }
-    
+
     function changeValidTime(uint256 _tokenId, uint256 _newValidTime) public {
         require(msg.sender == sellerOf(_tokenId));
         app[_tokenId].validTime = _newValidTime;
@@ -95,5 +103,9 @@ contract AppToken is ExtraTokenInterface {
     function changeUrl(uint256 _tokenId, string memory _newUrl) public {
         require(msg.sender == sellerOf(_tokenId));
         app[_tokenId].url = _newUrl;
+    }
+
+    function changeMarketAddress(address _market) external onlyOwner {
+        marketAddress = _market;
     }
 }

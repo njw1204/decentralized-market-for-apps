@@ -30,6 +30,7 @@ contract ExtraTokenInterface is BaseTokenInterface {
     mapping (address => uint256[]) public appsOfSeller; // store the seller's apps
     mapping (address => mapping (uint256 => uint256)) internal appsOfSellerIndex;
 
+    function transferToMarket(address _from, uint256 _tokenId) public;
     function sellerOf(uint256 _tokenId) public view returns (address _seller);
     function createApp(string memory _name, string memory _comment, string memory _url, uint256 _validTime) public;
     function changeSeller(address _to, uint256 _tokenId) public;
