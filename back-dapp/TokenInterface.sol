@@ -32,7 +32,6 @@ contract ExtraTokenInterface is BaseTokenInterface {
 
     function sellerOf(uint256 _tokenId) public view returns (address _seller);
     function createApp(string memory _name, string memory _comment, string memory _url, uint256 _validTime) public;
-    function transfer(address _to, uint256 _tokenId) public;
     function changeSeller(address _to, uint256 _tokenId) public;
     function changeValidTime(uint256 _tokenId, uint256 _newValidTime) public;
     function changeName(uint256 _tokenId, string memory _newName) public;
