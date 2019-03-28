@@ -41,6 +41,8 @@ contract AppMarket is Ownable {
         Sell storage sell = sellArr[tokenIdToSellIndex[_tokenId]];
         require(sell.tokenId == _tokenId && msg.value == sell.price && sell.enable);
 
+        (,,,,, address seller) = tokenContract.app(_tokenId);
+        address(uint160(seller)).transfer(msg.value); // transfer price to seller
         tokenContract.transfer(msg.sender, _tokenId); // transfer token to buyer
         sell.enable = false;
         nowSellCount = nowSellCount.sub(1);
