@@ -8,6 +8,9 @@ import "./TokenInterface.sol";
 contract AppMarket is Ownable {
     using SafeMath for uint256;
 
+    event MakeSell(uint256 indexed tokenId, uint256 price);
+    event BuyApp(uint256 indexed tokenId, uint256 price);
+
     struct Sell {
         uint256 tokenId;
         uint256 price;
@@ -35,6 +38,8 @@ contract AppMarket is Ownable {
         sellArr.push(Sell(_tokenId, _price, true));
         totalSellCount = totalSellCount.add(1);
         nowSellCount = nowSellCount.add(1);
+
+        emit MakeSell(_tokenId, _price);
     }
 
     function buyApp(uint256 _tokenId) external payable {
@@ -46,6 +51,8 @@ contract AppMarket is Ownable {
         tokenContract.transfer(msg.sender, _tokenId); // transfer token to buyer
         sell.enable = false;
         nowSellCount = nowSellCount.sub(1);
+
+        emit BuyApp(_tokenId, msg.value);
     }
 
     function changeTokenContract(address _tokenContract) external onlyOwner {
