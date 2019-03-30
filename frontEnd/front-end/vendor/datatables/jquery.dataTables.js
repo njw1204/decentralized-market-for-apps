@@ -14930,7 +14930,11 @@
 	 * @example
 	 *   // Column definition using the number renderer
 	 *   {
+<<<<<<< HEAD
 	 *     data: "월급",
+=======
+	 *     data: "salary",
+>>>>>>> master
 	 *     render: $.fn.dataTable.render.number( '\'', '.', 0, '$' )
 	 *   }
 	 *
